@@ -9,9 +9,9 @@ class ListProdukController extends Controller
 {
     public function show()
     {
-        $data = Produk::whereBetween('harga', [5000, 10000])
-                      ->orderBy('nama', 'asc')
+        $data = Produk::orderBy('nama', 'asc')
                       ->get();
+
         $nama = [];
         $desc = [];
         $harga = [];
@@ -23,5 +23,16 @@ class ListProdukController extends Controller
         }
 
         return view('list_produk', compact('nama', 'desc', 'harga'));
+    }
+
+    public function simpan(Request $request)
+    {
+        $produk = new Produk;
+        $produk->nama = $request->input('nama');
+        $produk->deskripsi = $request->input('deskripsi');
+        $produk->harga = $request->input('harga');
+        $produk->save();
+
+        return redirect()->back()->with('success', 'Data berhasil disimpan!');
     }
 }
