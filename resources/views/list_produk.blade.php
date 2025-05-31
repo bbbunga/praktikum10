@@ -12,6 +12,17 @@
             <h1 class="text-3xl font-extrabold text-pink-800">Produk Bunga Store</h1>
         </div>
 
+        {{-- Flash message --}}
+        @if (session('success'))
+            <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                {{ session('success') }}
+            </div>
+        @elseif (session('error'))
+            <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {{ session('error') }}
+            </div>
+        @endif
+
         <div class="bg-white shadow-md rounded-lg p-6 mb-10">
             <h2 class="text-xl font-semibold text-pink-700 mb-4">Input Produk Baru</h2>
             <form method="POST" action="{{ route('produk.simpan') }}" class="space-y-6">
@@ -46,6 +57,7 @@
                         <th class="px-4 py-3 text-left text-xs font-bold text-pink-700 uppercase tracking-wider">Nama</th>
                         <th class="px-4 py-3 text-left text-xs font-bold text-pink-700 uppercase tracking-wider">Deskripsi</th>
                         <th class="px-4 py-3 text-left text-xs font-bold text-pink-700 uppercase tracking-wider">Harga</th>
+                        <th class="px-4 py-3 text-left text-xs font-bold text-pink-700 uppercase tracking-wider">Action</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
@@ -55,6 +67,15 @@
                             <td class="px-4 py-3 text-sm text-gray-900">{{ $item }}</td>
                             <td class="px-4 py-3 text-sm text-gray-700">{{ $desc[$index] }}</td>
                             <td class="px-4 py-3 text-sm text-gray-900 font-semibold">Rp {{ number_format($harga[$index], 0, ',', '.') }}</td>
+                            <td class="px-4 py-3 text-sm text-red-600">
+                                <div class="flex space-x-2">
+                                <a href="{{ route('produk.edit', $id[$index]) }}" class="text-blue-500 hover:text-blue-700 font-medium">Edit</a>
+                                <form action="{{ route('produk.delete', $id[$index]) }}" method="POST" onsubmit="return confirm('Hapus produk {{ $item }}?');">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="text-red-500 hover:text-red-700 font-medium">Delete</button>
+                                </form>
+                            </td>
                         </tr>
                     @endforeach
                 </tbody>
