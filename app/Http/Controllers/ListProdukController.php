@@ -15,14 +15,15 @@ class ListProdukController extends Controller
         $desc = [];
         $harga = [];
         $id = [];
-    foreach ($data as $produk) {
-        $nama[] = $produk->nama;
-        $desc[] = $produk->deskripsi;
-        $harga[] = $produk->harga;
-        $id[] = $produk->id; 
-    }
 
-    return view('list_produk', compact('nama', 'desc', 'harga', 'id'));
+        foreach ($data as $produk) {
+            $nama[] = $produk->nama;
+            $desc[] = $produk->deskripsi;
+            $harga[] = $produk->harga;
+            $id[] = $produk->id; 
+        }
+
+        return view('list_produk', compact('nama', 'desc', 'harga', 'id'));
     }
 
     public function simpan(Request $request)
@@ -38,36 +39,37 @@ class ListProdukController extends Controller
 
     public function delete($id)
     {
-        $produk = Produk::where('id', $id)->first();
-    if ($produk) {
-        $produk->delete();
-        return redirect()->back()->with('success', 'Produk berhasil dihapus.');
-    } else {
-        return redirect()->back()->with('error', 'Produk tidak ditemukan.');
-    }
-    }
-
-    public function edit($id)
-    {
         $produk = Produk::find($id);
-    if (!$produk) {
-        return redirect()->back()->with('error', 'Produk tidak ditemukan.');
-    }
-    return view('edit_produk', compact('produk'));
+        if ($produk) {
+            $produk->delete();
+            return redirect()->back()->with('success', 'Produk berhasil dihapus.');
+        } else {
+            return redirect()->back()->with('error', 'Produk tidak ditemukan.');
+        }
     }
 
     public function update(Request $request, $id)
     {
         $produk = Produk::find($id);
-
-    if (!$produk) {
-        return redirect()->back()->with('error', 'Produk tidak ditemukan.');
-    }
+        if (!$produk) {
+            return redirect()->back()->with('error', 'Produk tidak ditemukan.');
+        }
 
         $produk->nama = $request->input('nama');
         $produk->deskripsi = $request->input('deskripsi');
         $produk->harga = $request->input('harga');
         $produk->save();
+
         return redirect('/listproduk')->with('success', 'Produk berhasil diupdate!');
+    }
+
+    public function getData($id)
+    {
+        $produk = Produk::find($id);
+        if (!$produk) {
+            return response()->json(['error' => 'Produk tidak ditemukan.'], 404);
+        }
+
+        return response()->json($produk);
     }
 }
